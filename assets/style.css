@@ -77,9 +77,10 @@ button, select, input { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: .55rem; color: var(--text); }
 .brand:hover { text-decoration: none; }
 /* 圆标是白底 JPEG/PNG 没有透明通道，裁成内切圆：暗色主题下不会露出四个白角 */
-.brand-logo { width: 22px; height: 22px; border-radius: 50%; flex: none; }
+.brand-logo { width: 32px; height: 32px; border-radius: 50%; flex: none; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-name { font-family: var(--font-mono); font-weight: 700; font-size: .9375rem; letter-spacing: .01em; }
+/* 标放大到 32px 后，字标得跟着涨一档，否则圆标压不住旁边 15px 的名字 */
+.brand-name { font-family: var(--font-mono); font-weight: 700; font-size: 1.0625rem; letter-spacing: .01em; }
 .brand-sub { font-size: .6875rem; color: var(--text-muted); }
 
 .topnav { display: flex; align-items: center; gap: .35rem; }
