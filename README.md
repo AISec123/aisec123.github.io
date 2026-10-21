@@ -12,7 +12,10 @@ AI 安全公司 / 开源项目 / 深度文章 / 标准与数据集的一站式�
 index.html          页面骨架（文案用 data-zh / data-en 双语属性）
 assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
 assets/app.js       左栏分类、logo 墙、搜索、排序、视图、双语、暗色、URL 状态同步
-assets/logo.svg     站点自身 favicon 与 OG 图
+assets/logo.jpg     站点自身品牌标原图（447×447，改标只换这一张）
+assets/logo.png     上面那张压到 96px，页头用
+assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
+                    favicon / 桌面图标 / 分享卡片，都由 logo.jpg 派生（命令见下）
 assets/logos/       条目的品牌图标（本地文件，见 scripts/fetch-logos.sh）
 data/entries.js     ★ 唯一的数据源，加条目只改这里
 scripts/fetch-logos.sh  批量抓品牌图标
@@ -66,6 +69,27 @@ bash scripts/fetch-logos.sh
 ```
 
 抓完把打印出来的路径填进条目的 `logo` 字段。抓不到的就不填，卡片自动退回首字母字标。
+
+## 换站点自身的标
+
+`assets/logo.jpg` 是唯一原图，页头标 / favicon / 桌面图标 / OG 卡片四张都由它派生，改标只需覆盖它再重跑：
+
+```bash
+sips -s format png -z 96 96   assets/logo.jpg --out assets/logo.png            # 页头
+sips -s format png -z 32 32   assets/logo.jpg --out assets/logo-32.png         # favicon
+sips -s format png -z 180 180 assets/logo.jpg --out assets/apple-touch-icon.png
+# OG：先缩到 360 再补白到 1200x630，圆标居中留边；直接 padToHeightWidth 会被撑满高度
+sips -s format png -z 360 360 assets/logo.jpg --out /tmp/og-src.png
+sips -s format png --padToHeightWidth 630 1200 --padColor FFFFFF \
+    /tmp/og-src.png --out assets/og.png                                        # 分享卡片
+```
+
+页头和 favicon 靠 `border-radius: 50%` 把方图裁成内切圆：原图是白底、没有透明通道，
+直接方着贴在暗色主题上会露出四个白角。OG 图必须是有尺寸的位图，SVG 卡片 Twitter / Slack / 微信都不认。
+
+OG 上没写字，只放了标：试过用 `qlmanage` 把带文案的 SVG 光栅化成 1200×630，
+它输出的是 1200×1200 缩略图、缩放和留边都不受控（量下来圆心会跑偏），所以退回纯补白。
+改完记得核对一下几何：`sips -g pixelWidth -g pixelHeight assets/og.png` 应该是 1200×630。
 
 ## 版式
 
