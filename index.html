@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="zh" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AISec123 · AI 安全导航</title>
+<meta name="description" content="AISec123 —— AI 安全导航：AI 安全公司、开源项目、深度文章与标准数据集的一站式索引，人工核对，不收软广。">
+<meta property="og:title" content="AISec123 · AI 安全导航">
+<meta property="og:description" content="AI 安全公司 / 开源项目 / 文章 / 标准数据集的一站式索引。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aisec123.github.io/">
+<meta property="og:image" content="https://aisec123.github.io/assets/logo.svg">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="canonical" href="https://aisec123.github.io/">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="./">
+      <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="3" y="20" width="6" height="9" rx="2" fill="currentColor" opacity=".45"></rect>
+        <rect x="13" y="14" width="6" height="15" rx="2" fill="currentColor" opacity=".72"></rect>
+        <rect x="23" y="6" width="6" height="23" rx="2" fill="currentColor"></rect>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">AISec123</span>
+        <span class="brand-sub" data-zh="AI 安全导航" data-en="AI Security Directory">AI 安全导航</span>
+      </span>
+    </a>
+
+    <nav class="topnav">
+      <a class="nav-link" href="https://we5ter.github.io/ai-tools/">
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M9 1.5L4 9h3.5l-.5 5.5L12 7H8.5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+        <span data-zh="每日推荐" data-en="Daily Picks">每日推荐</span>
+      </a>
+      <a class="nav-link" href="https://we5ter.github.io/">
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M2.5 3.2h4.2c.8 0 1.3.4 1.3 1v8c0-.6-.5-1-1.3-1H2.5zM13.5 3.2H9.3c-.8 0-1.3.4-1.3 1v8c0-.6.5-1 1.3-1h4.2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+        <span data-zh="博客" data-en="Blog">博客</span>
+      </a>
+      <a class="nav-submit" href="https://github.com/AISec123/aisec123.github.io/issues/new">
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <span data-zh="提交收录" data-en="Submit">提交收录</span>
+      </a>
+      <button class="icon-btn" id="lang-toggle" type="button" title="Switch language / 切换语言">EN</button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle dark mode / 切换暗色模式" aria-label="Toggle dark mode">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"></circle>
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="12" y1="2" x2="12" y2="4.5"></line><line x1="12" y1="19.5" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4.5" y2="12"></line><line x1="19.5" y1="12" x2="22" y2="12"></line>
+            <line x1="4.9" y1="4.9" x2="6.7" y2="6.7"></line><line x1="17.3" y1="17.3" x2="19.1" y2="19.1"></line>
+            <line x1="4.9" y1="19.1" x2="6.7" y2="17.3"></line><line x1="17.3" y1="6.7" x2="19.1" y2="4.9"></line>
+          </g>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+
+  <section class="hero">
+    <svg class="hero-art" viewBox="0 0 720 340" aria-hidden="true" preserveAspectRatio="xMaxYMid meet">
+      <defs>
+        <linearGradient id="sweep" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--accent)" stop-opacity=".38"></stop>
+          <stop offset="1" stop-color="var(--accent)" stop-opacity="0"></stop>
+        </linearGradient>
+        <radialGradient id="core" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="var(--accent)" stop-opacity=".5"></stop>
+          <stop offset="1" stop-color="var(--accent)" stop-opacity="0"></stop>
+        </radialGradient>
+      </defs>
+      <g stroke="currentColor" fill="none" stroke-width="1">
+        <circle cx="560" cy="170" r="42" opacity=".55"></circle>
+        <circle cx="560" cy="170" r="86" opacity=".38"></circle>
+        <circle cx="560" cy="170" r="130" opacity=".24"></circle>
+        <circle cx="560" cy="170" r="174" opacity=".14"></circle>
+        <line x1="386" y1="170" x2="734" y2="170" opacity=".16"></line>
+        <line x1="560" y1="-4" x2="560" y2="344" opacity=".16"></line>
+        <line x1="436" y1="46" x2="684" y2="294" opacity=".1"></line>
+        <line x1="436" y1="294" x2="684" y2="46" opacity=".1"></line>
+      </g>
+      <path d="M560 170 L720 62 A184 184 0 0 1 736 170 Z" fill="url(#sweep)"></path>
+      <circle cx="560" cy="170" r="60" fill="url(#core)"></circle>
+      <g fill="currentColor">
+        <circle cx="602" cy="112" r="4" opacity=".9"></circle>
+        <circle cx="498" cy="216" r="3" opacity=".6"></circle>
+        <circle cx="644" cy="228" r="3.5" opacity=".45"></circle>
+        <circle cx="520" cy="84" r="2.5" opacity=".5"></circle>
+      </g>
+    </svg>
+
+    <p class="hero-kicker">
+      <span class="kicker-dot" aria-hidden="true"></span>
+      <span data-zh="持续更新 · 人工核对" data-en="Updated as we check · by hand">持续更新 · 人工核对</span>
+    </p>
+    <h1 class="hero-title">
+      <span class="grad" data-zh="AI 安全，一页看完" data-en="AI security, one page">AI 安全，一页看完</span>
+    </h1>
+    <p class="hero-lede">
+      <span data-zh="公司、开源项目、深度文章、标准与数据集。收录只看有没有用，展示位单独标。"
+            data-en="Companies, open source, long-form writing, standards and datasets. Listings are chosen on usefulness alone — sponsored slots are always labelled.">公司、开源项目、深度文章、标准与数据集。收录只看有没有用，展示位单独标。</span>
+    </p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="https://github.com/AISec123/aisec123.github.io/issues/new">
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <span data-zh="提交收录" data-en="Submit a listing">提交收录</span>
+      </a>
+      <a class="btn-ghost" href="https://we5ter.github.io/ai-tools/">
+        <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M2.5 3.5h5v9h-5zM8.5 3.5h5v9h-5z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+        <span data-zh="每日推荐专栏" data-en="Daily picks column">每日推荐专栏</span>
+      </a>
+    </div>
+
+    <div class="wall">
+      <p class="wall-label">
+        <span data-zh="部分已收录" data-en="Some of what we list">部分已收录</span>
+      </p>
+      <div class="wall-list" id="wall" aria-label="已收录品牌 / Listed brands"></div>
+    </div>
+  </section>
+
+  <div class="layout">
+
+    <aside class="sidebar">
+      <nav class="side-group" aria-label="Categories">
+        <p class="side-title"><span data-zh="分类" data-en="Categories">分类</span></p>
+        <ul class="side-list" id="cats"></ul>
+      </nav>
+
+      <div class="side-group side-note">
+        <a class="side-submit" href="https://github.com/AISec123/aisec123.github.io/issues/new">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          <span data-zh="提交收录" data-en="Submit a listing">提交收录</span>
+        </a>
+        <p class="side-updated">
+          <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M8 4.6V8l2.4 1.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+          <span id="side-updated"></span>
+        </p>
+      </div>
+
+      <div class="side-group side-ads" id="ads"></div>
+    </aside>
+
+    <section class="content">
+      <div class="content-head">
+        <div class="search">
+          <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"></circle>
+            <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+          </svg>
+          <input id="q" type="search" autocomplete="off" spellcheck="false"
+                 data-ph-zh="搜索公司 / 工具 / 标签…（按 / 聚焦）"
+                 data-ph-en="Search companies / tools / tags… (press /)"
+                 placeholder="搜索公司 / 工具 / 标签…（按 / 聚焦）">
+        </div>
+        <div class="controls">
+          <span class="select-wrap">
+            <svg class="select-icon" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M3 4.5h10M5 8h6M6.5 11.5h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+            <select id="sort" aria-label="Sort">
+            <option value="default" data-zh="推荐排序" data-en="Recommended">推荐排序</option>
+            <option value="star" data-zh="按 star" data-en="By stars">按 star</option>
+            <option value="new" data-zh="最近更新" data-en="Recently added">最近更新</option>
+            <option value="az" data-zh="名称 A–Z" data-en="Name A–Z">名称 A–Z</option>
+          </select>
+          </span>
+          <div class="view-toggle" id="view" role="group" aria-label="View">
+            <button type="button" data-view="grid" title="Grid / 网格" aria-label="Grid view">
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+                <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"></rect>
+                <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+                <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"></rect>
+              </svg>
+            </button>
+            <button type="button" data-view="list" title="List / 列表" aria-label="List view">
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                <g fill="currentColor"><rect x="1" y="2" width="14" height="2.4" rx="1.2"></rect>
+                <rect x="1" y="6.8" width="14" height="2.4" rx="1.2"></rect>
+                <rect x="1" y="11.6" width="14" height="2.4" rx="1.2"></rect></g>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="crumb" id="crumb"></p>
+      <div id="list"></div>
+      <p class="empty" id="empty" hidden>
+        <span data-zh="没有匹配的条目。" data-en="Nothing matches.">没有匹配的条目。</span>
+        <button type="button" id="reset" data-zh="清空筛选" data-en="Clear filters">清空筛选</button>
+      </p>
+    </section>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p>
+      <span data-zh="收录只看有没有用：开源项目要能自己跑起来，公司要有实际产品。展示位单独标注，付钱也不会进列表。数据全部在"
+            data-en="Listings are chosen on usefulness alone: open source has to actually run, vendors have to have a product. Sponsored slots are labelled and can never buy their way into the list. All data lives in">收录只看有没有用：开源项目要能自己跑起来，公司要有实际产品。展示位单独标注，付钱也不会进列表。数据全部在</span>
+      <a href="https://github.com/AISec123/aisec123.github.io/blob/main/data/entries.js"><code>data/entries.js</code></a>
+      <span data-zh="里，改一个文件就能加条目。发现错漏请" data-en="— edit one file to add an entry. Spotted something wrong?">里，改一个文件就能加条目。发现错漏请</span>
+      <a href="https://github.com/AISec123/aisec123.github.io/issues/new" data-zh="提 issue" data-en="open an issue">提 issue</a>。
+    </p>
+    <p class="footer-friends">
+      <span class="friends-label" data-zh="友情链接" data-en="Friends">友情链接</span>
+      <span id="friends"></span>
+    </p>
+    <p class="footer-meta">
+      <span class="footer-brand"><span class="brand-mini" aria-hidden="true"></span>AISec123</span>
+      <span aria-hidden="true">·</span>
+      <span data-zh="AI 安全导航" data-en="AI Security Directory">AI 安全导航</span>
+      <span aria-hidden="true">·</span>
+      <span id="footer-updated"></span>
+      <button type="button" class="to-top" id="to-top">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 13V3.5M3.8 7.2L8 3.2l4.2 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span data-zh="回到顶部" data-en="Back to top">回到顶部</span>
+      </button>
+    </p>
+  </div>
+</footer>
+
+<script src="data/entries.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

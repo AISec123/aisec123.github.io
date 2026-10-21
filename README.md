@@ -1,1 +1,108 @@
-# agentverse11.github.io
+# AISec123 · AI 安全导航
+
+AI 安全公司 / 开源项目 / 深度文章 / 标准与数据集的一站式索引。
+
+**https://aisec123.github.io**
+
+## 这是什么
+
+纯静态、零构建：没有 npm、没有打包、没有 CI。
+
+```
+index.html          页面骨架（文案用 data-zh / data-en 双语属性）
+assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
+assets/app.js       左栏分类、logo 墙、搜索、排序、视图、双语、暗色、URL 状态同步
+assets/logo.svg     站点自身 favicon 与 OG 图
+assets/logos/       条目的品牌图标（本地文件，见 scripts/fetch-logos.sh）
+data/entries.js     ★ 唯一的数据源，加条目只改这里
+scripts/fetch-logos.sh  批量抓品牌图标
+.nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
+```
+
+## 加一个条目
+
+往 `data/entries.js` 的 `entries` 数组里追加一段：
+
+```js
+{
+  name: 'Protect AI',                 // 必填
+  url: 'https://protectai.com',       // 必填
+  section: 'companies',               // 必填，指向 sections 里的 key
+  desc: '一句话说明它做什么',           // 中文描述
+  desc_en: 'One-line English.',       // 可选，缺省回落中文
+  tags: ['模型安全', 'LLM 防护'],       // 可选，横切标签
+  star: 1522,                         // 可选，有则显示 ★
+  region: 'US',                       // 可选：US / CN / IL / CH / EU
+  logo: 'assets/logos/lakera-ai.png',  // 可选，品牌图标；缺省用首字母字标
+  post: 'https://…',                  // 可选，深度长文链接
+  status: 'featured',                 // 可选，featured 会置顶并打「推荐」标
+  added: '2026-10-21'                 // 可选，YYYY-MM-DD，用于「最近更新」排序
+}
+```
+
+除 name / url / section 外全部可选，没填的字段不会渲染出空占位。
+
+## 加一个板块
+
+往 `sections` 里追加一段（`key` 唯一，条目用 `section` 指向它），页面会自动多出一个 tab、一个分区和一套板块色：
+
+```js
+{ key: 'conferences', zh: '会议与赛事', en: 'Events', color: '#3A86FF',
+  desc: '中文一句话定位', desc_en: 'One-line English.' }
+```
+
+模板不认识任何具体分类，所以加板块不用改 HTML/CSS/JS：左侧分类栏、板块分区、板块色、标签池全部由数据推导。
+
+## 品牌图标
+
+图标一律存成本地文件放 `assets/logos/`，站点运行时不请求任何第三方图标服务——
+Google 的 favicon 服务在部分网络里根本不通，而 favicon.im 抓不到时会回一张通用 "f" 占位图，
+三家不同公司顶上出现同一个假 logo，比首字母更糟。
+
+```bash
+# 清单每行「来源|文件名」：域名抓 favicon，org:X 抓 GitHub 组织头像
+printf 'lakera.ai|lakera-ai\norg:NVIDIA|org-nvidia\n' > /tmp/logo-sources.txt
+bash scripts/fetch-logos.sh
+```
+
+抓完把打印出来的路径填进条目的 `logo` 字段。抓不到的就不填，卡片自动退回首字母字标。
+
+## 版式
+
+顶部 hero：内联 SVG 雷达背景（跟着主题色走、暗色自适应、不多一个请求）+ 双语标题 +
+两个 CTA + 一条灰度品牌 logo 墙（hover 上色，数据驱动，按域名去重取 16 个）。
+
+左侧固定一列分类栏（板块 + 提交入口 + 展示位），右侧是详情卡片网格。
+板块数量变化时侧栏自动重算；窄屏（<=980px）侧栏退化成顶部横向滚动的胶囊条，广告位改为并排两张。
+标签不在侧栏占位置：点卡片上的标签即可筛选，筛选条件会出现在面包屑里，那里有一个「×」可以取消。
+
+## 展示位
+
+`data/entries.js` 顶层的 `sponsors` 渲染在侧栏底部，每张带角标（自家 / 广告 / 虚位招租）。
+展示位和收录是两套数据：`sponsors` 不进 `entries`，不参与搜索、排序和计数，
+所以付钱买不到列表里的位置。页脚的 `friends` 同理，只是互链。
+
+## 本地预览
+
+```bash
+python3 -m http.server 4100     # 或直接双击 index.html，数据是 <script> 不是 fetch，file:// 也能跑
+```
+
+## 发布
+
+```bash
+git add -A && git commit -m 'add: xxx' && git push origin main
+```
+
+push 完 GitHub Pages 直接生效，没有构建步骤。
+
+## 收录口径
+
+人工核对过再收：不看 star 数、不看融资额、不收钱。开源条目要求能自己跑起来，公司条目要求有实际产品而不是只有一个 landing page。
+展示位单独标注，和收录两套数据，付钱也进不了列表。
+
+错漏请 [提 issue](https://github.com/AISec123/aisec123.github.io/issues/new)。
+
+---
+
+姊妹站：[Scanners-Box 每日 AI 工具推荐](https://we5ter.github.io/ai-tools/) · [Wester's Space](https://we5ter.github.io/)
