@@ -74,14 +74,89 @@ button, select, input { font: inherit; color: inherit; }
   gap: 1rem;
 }
 
-.brand { display: flex; align-items: center; gap: .55rem; color: var(--text); }
+.brand { display: flex; align-items: center; gap: .6rem; color: var(--text); }
 .brand:hover { text-decoration: none; }
-/* 圆标是白底 JPEG/PNG 没有透明通道，裁成内切圆：暗色主题下不会露出四个白角 */
-.brand-logo { width: 32px; height: 32px; border-radius: 50%; flex: none; }
-.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-/* 标放大到 32px 后，字标得跟着涨一档，否则圆标压不住旁边 15px 的名字 */
-.brand-name { font-family: var(--font-mono); font-weight: 700; font-size: 1.0625rem; letter-spacing: .01em; }
-.brand-sub { font-size: .6875rem; color: var(--text-muted); }
+
+/* ── 圆标 + 旋转光环 ───────────────────────────────────────
+   光环是 44 视口的 SVG，比 34px 的圆标大一圈：外圈一道几乎看不见的轨道，
+   上面一道 26 单位的亮弧慢慢转。静止的圈只是个边框，转起来才有
+   "仪器在跑"的感觉。hover 不提速，只让光晕亮一档 —— 一动就提速显得急。 */
+.brand-mark { position: relative; display: block; width: 42px; height: 42px; flex: none; }
+.brand-mark-glow {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 68%);
+  opacity: .5;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+.brand:hover .brand-mark-glow { opacity: 1; }
+.brand-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.brand-ring-track { fill: none; stroke: var(--border); stroke-width: 1.2; }
+.brand-ring-arc {
+  fill: none;
+  stroke: url(#brandRingGrad);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  /* 周长 2π×20.5≈128.8；26 亮 + 103 暗，正好一圈不重影 */
+  stroke-dasharray: 26 103;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: brandRingSpin 9s linear infinite;
+}
+@keyframes brandRingSpin { to { transform: rotate(360deg); } }
+.ring-s1 { stop-color: var(--accent); }
+.ring-s2 { stop-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+/* 圆标是白底 PNG 没有透明通道，裁成内切圆：暗色主题下不会露出四个白角 */
+.brand-logo { position: absolute; inset: 4px; width: 34px; height: 34px; border-radius: 50%; }
+
+/* ── 字标 ──────────────────────────────────────────────────
+   渐变 <stop> 的颜色走 CSS 变量：浅色主题深字（--text → --accent），
+   暗色主题亮字。写死颜色的话切主题必瞎一处 —— 浅底配亮字直接消失。
+   Sec 用主题色断开，AISec123 六个字母一色太闷，也顺手把"安全"那段拎出来。 */
+.brand-text { display: flex; flex-direction: column; gap: .2rem; line-height: 1.15; }
+.brand-wordmark { display: block; height: 20px; width: auto; overflow: visible; }
+.wm-text {
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  fill: url(#wmGrad);
+}
+.wm-sec { fill: var(--accent); }
+.wm-s1 { stop-color: var(--text); }
+.wm-s2 { stop-color: var(--accent); }
+/* 高光层：同一段文字再画一遍，整层填白，用 mask 只露出中间一条 30 宽
+   的亮带、左右淡出。亮带从左往右扫，5.5s 一轮，扫到尾就在右边外停着
+   等下一轮 —— 不循环回扫，回扫会显得画面在抖。
+   高光层里 Sec 也要是白的，否则那一截颜色跟周围不连续。 */
+.wm-text--sheen { fill: #fff; }
+.wm-text--sheen .wm-sec { fill: #fff; }
+.wm-sheen-rect { transform-box: view-box; animation: wmSheen 5.5s ease-in-out infinite; }
+@keyframes wmSheen {
+  0%   { transform: translateX(0); }
+  60%  { transform: translateX(96px); }
+  100% { transform: translateX(96px); }
+}
+
+/* ── 副标 ──────────────────────────────────────────────────
+   一道从左淡出的主题色细线开头，比光秃一行小字多一分"设计过"的意思。
+   字距拉开到 .12em，小字不拉字距就是一糊。 */
+.brand-sub {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .625rem;
+  letter-spacing: .12em;
+  color: var(--text-muted);
+}
+.brand-sub-rule {
+  width: 14px;
+  height: 1px;
+  flex: none;
+  background: linear-gradient(to right, var(--accent), transparent);
+}
 
 .topnav { display: flex; align-items: center; gap: .35rem; }
 
@@ -888,4 +963,6 @@ mark {
   .card:hover { transform: none; }
   .hero-art path, .kicker-dot { animation: none; }
   .wall-item, .wall-mark img { transition: none; }
+  .brand-ring-arc, .wm-sheen-rect { animation: none; }
+  .brand-mark-glow { transition: none; }
 }
