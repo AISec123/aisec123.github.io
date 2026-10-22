@@ -147,8 +147,8 @@
       <span class="grad" data-zh="全网最全AI安全知识图谱" data-en="The most complete AI security knowledge map">全网最全AI安全知识图谱</span>
     </h1>
     <p class="hero-lede">
-      <span data-zh="覆盖AI安全企业、开源项目、深度文章、模型评测数据集、论文、教授、知名博主、微信公众号、知乎、bilibili、微博、YouTube等"
-            data-en="Covers AI security vendors, open source projects, deep-dive writing, model evaluation datasets, papers, professors, well-known bloggers, WeChat official accounts, Zhihu, bilibili, Weibo, YouTube and more.">覆盖AI安全企业、开源项目、深度文章、模型评测数据集、论文、教授、知名博主、微信公众号、知乎、bilibili、微博、YouTube等</span>
+      <span data-zh="谁在做、做了什么、说了什么、怎么验证。企业、开源项目、论文、评测基准、研究者与内容平台 —— 一张图收齐 AI 安全的全部线索。"
+            data-en="Who's building, what shipped, what's being said, how it's verified. Vendors, open source, papers, benchmarks, researchers and platforms — every thread of AI security on one map.">谁在做、做了什么、说了什么、怎么验证。企业、开源项目、论文、评测基准、研究者与内容平台 —— 一张图收齐 AI 安全的全部线索。</span>
     </p>
     <div class="hero-cta">
       <a class="btn-primary" href="https://github.com/AISec123/aisec123.github.io/issues/new">
@@ -161,11 +161,65 @@
       </a>
     </div>
 
+    <!-- 收录范围：内容类型图例。原来是品牌 logo 墙，换成图标 + 名称 ——
+         一眼看清"这张图里到底有什么"，比一排灰度 logo 更直接地回答这个问题。
+         写成静态 HTML 而不是 JS 渲染：爬虫不执行 JS，SEO 那轮已经因为这个
+         吃过亏（见 README「已知短板」）。图标统一一个青色，不搞十二种颜色，
+         深色面板上彩虹一排很吵。 -->
     <div class="wall">
       <p class="wall-label">
-        <span data-zh="部分已收录" data-en="Some of what we list">部分已收录</span>
+        <span data-zh="收录范围" data-en="Coverage">收录范围</span>
       </p>
-      <div class="wall-list" id="wall" aria-label="已收录品牌 / Listed brands"></div>
+      <ul class="cov-list">
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="7" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M10 7h3.5v6.5M2.5 13.5h11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.3 5.5h2.4M5.3 8h2.4M5.3 10.5h2.4" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span data-zh="企业" data-en="Vendors">企业</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4.2L2.6 8 6 11.8M10 4.2L13.4 8 10 11.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-zh="开源项目" data-en="Open source">开源项目</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h5.2L12 5.3v8.2H4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.2 2.5v2.8H12M6.2 8.2h3.6M6.2 10.6h3.6" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span data-zh="深度文章" data-en="Deep dives">深度文章</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><ellipse cx="8" cy="4" rx="5" ry="1.9" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3 4v8c0 1.05 2.24 1.9 5 1.9s5-.85 5-1.9V4M3 8c0 1.05 2.24 1.9 5 1.9s5-.85 5-1.9" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span data-zh="模型评测数据集" data-en="Benchmarks">模型评测数据集</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.4L1.6 5.4 8 8.4l6.4-3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M4.2 6.9v3.3c0 1.35 1.7 2.2 3.8 2.2s3.8-.85 3.8-2.2V6.9M13.9 6.1v4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span data-zh="论文" data-en="Papers">论文</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M3.2 13.4c0-2.6 2.1-3.9 4.8-3.9s4.8 1.3 4.8 3.9" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span data-zh="教授" data-en="Professors">教授</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.4 2.6l3 3-7.2 7.2H3.2v-3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8.8 4.2l3 3" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          <span data-zh="知名博主" data-en="Bloggers">知名博主</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3.4h10v6.6H8.6L5.4 12.4V10H3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M5.6 6.4h4.8" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span data-zh="微信公众号" data-en="WeChat">微信公众号</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 3.2h7.2v5.4H7.2L4.4 11.2V8.6H2.6z" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/><path d="M6.2 9.4h6.6v4.2h-1.2l-2 1.6v-1.6H6.2z" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linejoin="round"/></svg>
+          <span data-zh="知乎" data-en="Zhihu">知乎</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.6 2l1.4 2M10.4 2L9 4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6.6 6.8v3.6l3-1.8z" fill="currentColor" stroke="none"/></svg>
+          <span data-zh="bilibili" data-en="bilibili">bilibili</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.6 12.4l3.4-3.9 2.4 2 4.4-5.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.8 4.7h3v3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-zh="微博" data-en="Weibo">微博</span>
+        </li>
+        <li class="cov-chip">
+          <svg class="cov-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.6" y="3.6" width="12.8" height="8.8" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 6.5v3.2l3-1.6z" fill="currentColor" stroke="none"/></svg>
+          <span data-zh="YouTube" data-en="YouTube">YouTube</span>
+        </li>
+      </ul>
     </div>
   </section>
 

@@ -283,9 +283,12 @@ button, select, input { font: inherit; color: inherit; }
   text-decoration: none;
 }
 
-/* 品牌墙：灰度为主，hover 上色，是导航站最常见的"我们收了谁"信号。
-   落在深色面板上，所以整组改成半透明白描边 + logo 提亮，
-   不能用 --bg/--border（浅色变量在深底上会反白成一片亮块）。 */
+/* 收录范围：内容类型图例条。原来是品牌 logo 墙，换成图标 + 名称 ——
+   一眼看清"这张图里到底有什么"，比一排灰度 logo 更直接。
+   整组是静态 HTML，不靠 JS 渲染，爬虫不执行 JS 也读得到。
+   落在深色面板上，所以用半透明白描边，不能用 --bg/--border
+   （浅色变量在深底上会反白成一片亮块）。
+   图标统一一个青色、不搞十二种颜色：深色面板上彩虹一排很吵。 */
 .wall { margin-top: 1.6rem; padding-top: 1.1rem; border-top: 1px solid rgb(255 255 255 / .16); }
 .wall-label {
   margin: 0 0 .6rem;
@@ -295,41 +298,26 @@ button, select, input { font: inherit; color: inherit; }
   text-transform: uppercase;
   color: rgb(255 255 255 / .58);
 }
-.wall-list { display: flex; flex-wrap: wrap; gap: .4rem; }
-.wall-item {
+.cov-list { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.cov-chip {
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
-  padding: .22rem .6rem .22rem .22rem;
-  border: 1px solid rgb(255 255 255 / .18);
+  gap: .38rem;
+  padding: .26rem .66rem .26rem .5rem;
+  border: 1px solid rgb(255 255 255 / .16);
   border-radius: 999px;
   background: rgb(255 255 255 / .07);
   font-size: .75rem;
-  color: rgb(255 255 255 / .82);
+  line-height: 1.4;
+  color: rgb(255 255 255 / .86);
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
 }
-.wall-item:hover {
-  color: #fff;
-  border-color: rgb(255 255 255 / .45);
-  background: rgb(255 255 255 / .14);
-  box-shadow: 0 4px 14px -6px rgb(0 0 0 / .5);
-  text-decoration: none;
+.cov-chip:hover {
+  border-color: rgb(127 208 230 / .55);
+  background: rgb(127 208 230 / .13);
   transform: translateY(-1px);
 }
-.wall-mark {
-  width: 20px; height: 20px; border-radius: 5px;
-  display: flex; align-items: center; justify-content: center;
-  flex: none;
-  background: rgb(255 255 255 / .1);
-  overflow: hidden;
-}
-/* 深底上的彩色 logo 会互相打架，统一压成近白的剪影，hover 再还原本色 */
-.wall-mark img {
-  filter: grayscale(1) brightness(1.75) contrast(.92);
-  opacity: .82;
-  transition: filter .18s ease, opacity .18s ease;
-}
-.wall-item:hover .wall-mark img { filter: none; opacity: 1; }
-.wall-mark .mark-fb { font-size: .6875rem; color: rgb(255 255 255 / .85); }
+.cov-ico { width: 14px; height: 14px; color: #7fd0e6; flex: none; }
 
 /* ── 两栏版式：左分类栏 + 右详情区 ────────────────────────── */
 .layout {
@@ -885,6 +873,6 @@ mark {
   .card { transition: none; }
   .card:hover { transform: none; }
   .hero-art path, .kicker-dot { animation: none; }
-  .wall-item, .wall-mark img { transition: none; }
+  .cov-chip { transition: none; }
   .brand-lockup { transition: none; }
 }

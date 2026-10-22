@@ -293,27 +293,6 @@
 
   /* 首页那条品牌 logo 墙：从已收录条目里按域名去重，
      优先有 logo 的，再补精选，凑够一面就停。 */
-  function renderWall() {
-    var el = $('#wall');
-    if (!el) return;
-    var seen = {}, out = [];
-    var pool = ALL.slice().sort(function (a, b) {
-      return (b.logo ? 1 : 0) - (a.logo ? 1 : 0) || (b.status === 'featured' ? 1 : 0) - (a.status === 'featured' ? 1 : 0);
-    });
-    pool.forEach(function (e) {
-      if (out.length >= 16) return;
-      var h = e.github ? 'gh:' + e.github.split('/')[0] : hostOf(e.url);
-      if (!h || seen[h]) return;
-      seen[h] = 1;
-      out.push(e);
-    });
-    el.innerHTML = out.map(function (e) {
-      return '<a class="wall-item" href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer" title="' + esc(e.name) + '">' +
-        markHtml(e, 'wall-mark') + '<span>' + esc(e.name) + '</span></a>';
-    }).join('');
-    mountLogos(el);
-  }
-
   function renderAds() {
     var el = $('#ads');
     if (!el) return;
@@ -449,7 +428,6 @@
   applyLang();
   applyTheme();
   renderTimes();
-  renderWall();
   renderFriends();
   renderAll();
   syncView();
