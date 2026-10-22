@@ -1,4 +1,4 @@
-# AISec123 · AI 安全导航
+# AISec123 · 全网最全 AI 安全知识图谱
 
 AI 安全公司 / 开源项目 / 深度文章 / 标准与数据集的一站式索引。
 
@@ -19,6 +19,8 @@ assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
                     favicon / 桌面图标 / 分享卡片，都由 logo.jpg 派生（命令见下）
 assets/logos/       条目的品牌图标（本地文件，见 scripts/fetch-logos.sh）
 data/entries.js     ★ 唯一的数据源，加条目只改这里
+robots.txt         放行全部爬虫 + 声明 sitemap
+sitemap.xml        单页站点，只有一个 URL（见「SEO」一节）
 scripts/fetch-logos.sh  批量抓品牌图标
 scripts/gen-hero-bg.py  重新生成 hero 底图
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
@@ -126,6 +128,38 @@ python3 scripts/gen-hero-bg.py --seed 7 --w 1600 --h 900 --out /tmp/bg.jpg
 `data/entries.js` 顶层的 `sponsors` 渲染在侧栏底部，每张带角标（自家 / 广告 / 虚位招租）。
 展示位和收录是两套数据：`sponsors` 不进 `entries`，不参与搜索、排序和计数，
 所以付钱买不到列表里的位置。页脚的 `friends` 同理，只是互链。
+
+## SEO
+
+站点是单页应用，分类 / 搜索 / 排序全是前端状态，所以 SEO 资产都很薄但齐全：
+
+| 文件 | 作用 |
+|---|---|
+| `robots.txt` | 放行全部 + 声明 sitemap 地址 |
+| `sitemap.xml` | 只有一个 URL（`?sec=` / `?q=` 是同一页的不同视图，属重复内容，不进） |
+| `index.html` `<head>` | canonical、og / twitter 卡片、theme-color |
+| `index.html` JSON-LD | `WebSite` + `Organization` 结构化数据 |
+
+两处关键词布局，分工不同：
+
+- **`alternateName`（JSON-LD）** —— 声明「本站又称 AI 攻防数据库 / AI 威胁矩阵 /
+  AI 安全知识库」。这是告诉搜索引擎别名的正规位置，带/不带空格各写了一份，
+  因为中文分词两种都可能被搜。
+- **页脚「又称」一行（`.footer-alias`）** —— 同一批别名的可见文本。搜索引擎读
+  可见内容，`meta keywords` 那种标签 2009 年后就没人看了，别名必须出现在正文里。
+
+`potentialAction` 里的 `SearchAction` 指向 `/?q={关键词}`（就是 `app.js` 的
+`readUrl` 读的那个参数），够条件时 Google 会在搜索结果里给站点加一个站内搜索框。
+
+**改 `data/entries.js` 的 `updated` 时，把 `sitemap.xml` 的 `<lastmod>` 同步成同一天。**
+
+### 已知短板：内容是 JS 渲染的
+
+54 个条目的卡片由 `app.js` 从 `data/entries.js` 渲染。Googlebot / Bingbot 会执行
+JS，看得见；但**大多数 AI 爬虫（GPTBot、ClaudeBot 等）不执行 JS**，它们只拿到
+`<head>` 和 hero/页脚的静态文本。想让 AI 答案引擎引用到具体条目，需要把条目
+做成初始 HTML（`<noscript>` 全量列表，或构建时预渲染进 index.html）——
+这是个要加生成步骤的改动，还没做。
 
 ## 本地预览
 

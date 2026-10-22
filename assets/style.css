@@ -793,6 +793,17 @@ mark {
   color: var(--text-muted);
 }
 .footer p { margin: 0; }
+/* 「又称」一行：把站点的几个别名（AI 攻防数据库 / AI 威胁矩阵 / AI 安全知识库）
+   做成可见文本。搜索引擎读的是可见内容，meta keywords 那种标签早没人看了，
+   别名放 JSON-LD alternateName 管结构化、放这里管正文，两边都覆盖。 */
+.footer-alias { display: flex; align-items: baseline; gap: .45rem; flex-wrap: wrap; }
+.footer-alias > :first-child {
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+}
+.footer-alias > :last-child { color: var(--text-muted); }
 .footer-meta { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
 .footer-friends { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
 .friends-label {

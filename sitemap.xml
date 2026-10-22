@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  站点只有 index.html 一个页面（分类 / 搜索 / 排序都是前端状态，URL 参数
+  ?sec= / ?q= 只是同一页的不同视图，属重复内容，不进 sitemap）。
+  改 data/entries.js 的 updated 后，把下面 <lastmod> 同步成同一天。
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://aisec123.github.io/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
