@@ -12,6 +12,7 @@ AI 安全公司 / 开源项目 / 深度文章 / 标准与数据集的一站式�
 index.html          页面骨架（文案用 data-zh / data-en 双语属性）
 assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
 assets/app.js       左栏分类、logo 墙、搜索、排序、视图、双语、暗色、URL 状态同步
+assets/hero-bg.jpg  hero 面板底图，由 scripts/gen-hero-bg.py 生成
 assets/logo.jpg     站点自身品牌标原图（447×447，改标只换这一张）
 assets/logo.png     上面那张压到 96px，页头用
 assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
@@ -19,6 +20,7 @@ assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
 assets/logos/       条目的品牌图标（本地文件，见 scripts/fetch-logos.sh）
 data/entries.js     ★ 唯一的数据源，加条目只改这里
 scripts/fetch-logos.sh  批量抓品牌图标
+scripts/gen-hero-bg.py  重新生成 hero 底图
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
 ```
 
@@ -93,12 +95,31 @@ OG 上没写字，只放了标：试过用 `qlmanage` 把带文案的 SVG 光栅
 
 ## 版式
 
-顶部 hero：内联 SVG 雷达背景（跟着主题色走、暗色自适应、不多一个请求）+ 双语标题 +
-两个 CTA + 一条灰度品牌 logo 墙（hover 上色，数据驱动，按域名去重取 16 个）。
+顶部 hero 是一整块深色面板：`assets/hero-bg.jpg` 垫底，上面再压一条斜向压暗渐变
+（左浓右淡，白字自己保证对比度），右侧叠内联 SVG 雷达。面板**不跟随** `data-theme`
+—— 图上压白字，跟着主题翻浅色会让字掉进亮背景里，所以两种模式下 hero 都是深的。
+面板里依次是双语标题、两个 CTA、三个数字（收录数 / 板块数 / 最后更新，由 app.js 现算）、
+灰度品牌 logo 墙（hover 上色，数据驱动，按域名去重取 16 个）。
 
 左侧固定一列分类栏（板块 + 提交入口 + 展示位），右侧是详情卡片网格。
-板块数量变化时侧栏自动重算；窄屏（<=980px）侧栏退化成顶部横向滚动的胶囊条，广告位改为并排两张。
+**每个分类菜单是一个独立色块**：底色是板块色的淡染色 + 左侧一道实色边条 + 板块色计数胶囊，
+选中时整块填成掺黑的板块色、字翻白（四个板块色亮度差得多，纯色配白字过不了 AA，
+所以统一掺 48% 黑，最低 5.8:1）。改 `sections` 里的 `color` 即可换色，不用碰 CSS。
+窄屏（<=980px）侧栏退化成顶部横向滚动的胶囊条，色块逻辑不变。
 标签不在侧栏占位置：点卡片上的标签即可筛选，筛选条件会出现在面包屑里，那里有一个「×」可以取消。
+
+## hero 底图
+
+底图不是现成素材，是 `scripts/gen-hero-bg.py` 跑出来的：深海军蓝斜向渐变 + 两团品牌色辉光 +
+透视网格 + 节点关系图 + 斜向扫描光带 + 四周压角。左右明暗分布是刻意做的 ——
+左侧预压暗给白字，右侧留亮给雷达和辉光，和 CSS 里那条压暗渐变配套，换图就得重调 CSS。
+
+```bash
+python3 scripts/gen-hero-bg.py            # 覆盖写 assets/hero-bg.jpg
+python3 scripts/gen-hero-bg.py --seed 7 --w 1600 --h 900 --out /tmp/bg.jpg
+```
+
+依赖 numpy / pillow，只在本机跑，站点本身零依赖。
 
 ## 展示位
 

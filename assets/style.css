@@ -136,26 +136,54 @@ button, select, input { font: inherit; color: inherit; }
 }
 
 /* ── Hero ────────────────────────────────────────────────── */
-.hero { position: relative; padding: 3rem 0 1.75rem; }
-.hero > :not(.hero-art) { position: relative; z-index: 1; }
+/* 整块做成"产品页首屏"：底图 + 压暗层 + 白字。
+   底图由 scripts/gen-hero-bg.py 生成（不是现成素材，参数可复现）。
+   面板自己锁定深色，不跟 data-theme 走 —— 图上压白字必须自己保证对比度，
+   跟随主题会让浅色模式下的白字掉进亮背景里。 */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: 1.25rem;
+  padding: 2.4rem 2.25rem 1.9rem;
+  border-radius: 16px;
+  background: #08131b url('hero-bg.jpg') center / cover no-repeat;
+  box-shadow: 0 20px 46px -24px rgb(0 0 0 / 55%);
+}
+/* 压暗层：左侧实一点托文字，右侧留点透让底图和雷达图透出来。
+   图和 CSS 里那条斜向渐变是配套的 —— 换图就得重调这里。 */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(102deg,
+      rgb(4 11 17 / .94) 0%,
+      rgb(4 11 17 / .86) 34%,
+      rgb(4 11 17 / .52) 68%,
+      rgb(4 11 17 / .30) 100%),
+    radial-gradient(120% 90% at 86% 24%, rgb(47 125 149 / .30) 0%, transparent 62%);
+}
+.hero > :not(.hero-art) { position: relative; z-index: 2; }
 
 /* 背景是内联 SVG 的雷达图，不是位图：跟着主题色走、缩放不糊、不多一个请求。
-   右侧淡出用 mask，免得压住标题文字。 */
+   右侧淡出用 mask，免得压住标题文字。压在底图上时用亮一档的青，
+   深色面板里 --accent(#2f7d95) 会被压没。 */
 .hero-art {
   position: absolute;
-  right: -2rem;
-  top: -1.5rem;
-  width: min(600px, 68%);
+  right: -3rem;
+  top: -2rem;
+  width: min(600px, 62%);
   height: auto;
-  color: var(--accent);
-  opacity: .62;
+  color: #7fd0e6;
+  opacity: .5;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
   -webkit-mask-image: linear-gradient(to left, #000 45%, transparent 92%);
   mask-image: linear-gradient(to left, #000 45%, transparent 92%);
 }
 .hero-art path { transform-origin: 560px 170px; animation: sweep 12s linear infinite; }
-[data-theme="dark"] .hero-art { opacity: .5; }
 
 @keyframes sweep { to { transform: rotate(360deg); } }
 
@@ -165,36 +193,39 @@ button, select, input { font: inherit; color: inherit; }
   gap: .4rem;
   margin: 0 0 .85rem;
   padding: .2rem .6rem .2rem .45rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--border));
+  border: 1px solid rgb(255 255 255 / .3);
   border-radius: 999px;
-  background: var(--accent-soft);
+  background: rgb(255 255 255 / .1);
   font-size: .6875rem;
   font-weight: 600;
   letter-spacing: .02em;
-  color: var(--accent);
+  color: #dff1f7;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 .kicker-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent);
+  background: #58b6d4;
+  box-shadow: 0 0 0 0 rgb(88 182 212 / .6);
   animation: pulse 2.4s ease-out infinite;
 }
 @keyframes pulse {
-  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  0%   { box-shadow: 0 0 0 0 rgb(88 182 212 / .55); }
   70%  { box-shadow: 0 0 0 7px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 
 .hero-title {
   margin: 0 0 .6rem;
-  font-size: clamp(1.6rem, 4vw, 2.35rem);
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.22;
   letter-spacing: -.015em;
+  color: #fff;
 }
-/* 标题尾巴染一笔主色，比整句加粗更像产品页 */
+/* 标题尾巴染一笔亮青，比整句加粗更像产品页 */
 .hero-title .grad {
-  background: linear-gradient(94deg, var(--text) 0%, var(--text) 46%, var(--accent) 100%);
+  background: linear-gradient(94deg, #fff 0%, #fff 40%, #7fd0e6 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -202,9 +233,34 @@ button, select, input { font: inherit; color: inherit; }
 
 .hero-lede {
   margin: 0;
-  max-width: 62ch;
-  color: var(--text-muted);
+  max-width: 60ch;
+  color: rgb(255 255 255 / .76);
   font-size: .9375rem;
+}
+
+/* 三个数字：导航站最有说服力的商业信号就是"我这儿有多少东西"。
+   数值由 app.js 现算，这里是纯排版。 */
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem 1.9rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hero-stats li { display: flex; flex-direction: column; gap: .05rem; }
+.hero-stats b {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stats span {
+  font-size: .6875rem;
+  letter-spacing: .05em;
+  color: rgb(255 255 255 / .58);
 }
 
 .hero-cta { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.15rem; }
@@ -219,29 +275,40 @@ button, select, input { font: inherit; color: inherit; }
   font-weight: 600;
   line-height: 1.4;
 }
+/* 主按钮在深色面板上要更亮一档：#2f7d95 压在近黑底上会闷掉 */
 .btn-primary {
-  border: 1px solid var(--accent);
-  background: var(--accent);
+  border: 1px solid #58b6d4;
+  background: linear-gradient(180deg, #3c93ae 0%, #2f7d95 100%);
   color: #fff;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 6px 18px -6px rgb(88 182 212 / .55);
 }
-.btn-primary:hover { color: #fff; text-decoration: none; filter: brightness(1.07); }
+.btn-primary:hover { color: #fff; text-decoration: none; filter: brightness(1.1); }
+/* 次按钮是描边白，不是 --bg 底的浅色描边 —— 深色面板上浅色描边看不见 */
 .btn-ghost {
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
+  border: 1px solid rgb(255 255 255 / .38);
+  background: rgb(255 255 255 / .08);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.btn-ghost:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / .16);
+  color: #fff;
+  text-decoration: none;
+}
 
-/* 品牌墙：灰度为主，hover 上色，是导航站最常见的"我们收了谁"信号 */
-.wall { margin-top: 1.6rem; padding-top: 1.1rem; border-top: 1px solid var(--border); }
+/* 品牌墙：灰度为主，hover 上色，是导航站最常见的"我们收了谁"信号。
+   落在深色面板上，所以整组改成半透明白描边 + logo 提亮，
+   不能用 --bg/--border（浅色变量在深底上会反白成一片亮块）。 */
+.wall { margin-top: 1.6rem; padding-top: 1.1rem; border-top: 1px solid rgb(255 255 255 / .16); }
 .wall-label {
   margin: 0 0 .6rem;
   font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: rgb(255 255 255 / .58);
 }
 .wall-list { display: flex; flex-wrap: wrap; gap: .4rem; }
 .wall-item {
@@ -249,16 +316,17 @@ button, select, input { font: inherit; color: inherit; }
   align-items: center;
   gap: .4rem;
   padding: .22rem .6rem .22rem .22rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgb(255 255 255 / .18);
   border-radius: 999px;
-  background: var(--bg);
+  background: rgb(255 255 255 / .07);
   font-size: .75rem;
-  color: var(--text-muted);
+  color: rgb(255 255 255 / .82);
 }
 .wall-item:hover {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--text) 7%, transparent);
+  color: #fff;
+  border-color: rgb(255 255 255 / .45);
+  background: rgb(255 255 255 / .14);
+  box-shadow: 0 4px 14px -6px rgb(0 0 0 / .5);
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -266,12 +334,17 @@ button, select, input { font: inherit; color: inherit; }
   width: 20px; height: 20px; border-radius: 5px;
   display: flex; align-items: center; justify-content: center;
   flex: none;
-  background: var(--bg-soft);
+  background: rgb(255 255 255 / .1);
   overflow: hidden;
 }
-.wall-mark img { filter: grayscale(1); opacity: .78; transition: filter .18s ease, opacity .18s ease; }
+/* 深底上的彩色 logo 会互相打架，统一压成近白的剪影，hover 再还原本色 */
+.wall-mark img {
+  filter: grayscale(1) brightness(1.75) contrast(.92);
+  opacity: .82;
+  transition: filter .18s ease, opacity .18s ease;
+}
 .wall-item:hover .wall-mark img { filter: none; opacity: 1; }
-.wall-mark .mark-fb { font-size: .6875rem; color: var(--text-muted); }
+.wall-mark .mark-fb { font-size: .6875rem; color: rgb(255 255 255 / .85); }
 
 /* ── 两栏版式：左分类栏 + 右详情区 ────────────────────────── */
 .layout {
@@ -302,45 +375,70 @@ button, select, input { font: inherit; color: inherit; }
   color: var(--text-muted);
 }
 
-.side-list { margin: 0; padding: 0; list-style: none; }
+.side-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .3rem; }
 
+/* 每个菜单自己一个色块：底色是板块色的淡染色 + 左侧一道实色边条，
+   选中时整块填成板块色、字翻白。这样"四个板块四种颜色"是明示的，
+   不用去认小圆点 —— 侧栏本来就是全站唯一的板块索引，该显眼。
+   颜色由 app.js 通过行内 --cat 注入，改数据在 entries.js 里改 color 即可。 */
 .side-item {
   position: relative;
   display: flex;
   align-items: center;
   gap: .5rem;
   width: 100%;
-  padding: .38rem .6rem;
-  border: 0;
-  border-radius: var(--radius);
-  background: none;
+  padding: .42rem .55rem;
+  border: 1px solid color-mix(in srgb, var(--cat, var(--accent)) 34%, var(--border));
+  border-left: 4px solid var(--cat, var(--accent));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--cat, var(--accent)) 13%, var(--bg));
   font-size: .875rem;
-  color: var(--text-muted);
+  font-weight: 500;
+  color: var(--text);
   text-align: left;
   cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
-.side-item:hover { color: var(--text); background: var(--bg-soft); }
+.side-item:hover {
+  background: color-mix(in srgb, var(--cat, var(--accent)) 24%, var(--bg));
+  border-color: color-mix(in srgb, var(--cat, var(--accent)) 62%, var(--border));
+}
+/* 选中 = 整块实色。白字压在四个板块色（#F72585 / #8338EC / #06D6A0 / #FB5607）
+   上并不都够对比度：#06D6A0 亮绿配白字只有 1.7:1，纯紫配近黑字也只有 2.5:1。
+   所以实色块统一掺 48% 黑压暗一档再上白字，四个色全过 AA（最低 5.8:1），
+   而且暗色主题共用一套，不用再按 data-theme 拆两个字色。 */
 .side-item[aria-selected="true"] {
-  color: var(--text);
-  background: var(--accent-soft);
+  background: color-mix(in srgb, var(--cat, var(--accent)) 52%, #000);
+  border-color: color-mix(in srgb, var(--cat, var(--accent)) 52%, #000);
+  color: #fff;
   font-weight: 600;
-}
-/* 选中态用左侧一道板块色竖条标识，比整块填色安静，
-   而且四个板块四种颜色时不会让侧栏变成调色盘。 */
-.side-item[aria-selected="true"]::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 20%;
-  bottom: 20%;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: var(--cat, var(--accent));
+  box-shadow: 0 4px 12px -5px color-mix(in srgb, var(--cat, var(--accent)) 75%, transparent);
 }
 
-.side-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cat, var(--accent)); flex: none; }
+/* 色块里的小方块：实心板块色，选中后翻白，一眼能读出"当前是哪个色" */
+.side-dot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  background: var(--cat, var(--accent));
+  flex: none;
+}
+.side-item[aria-selected="true"] .side-dot { background: #fff; }
+
 .side-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cnt { font-family: var(--font-mono); font-size: .75rem; opacity: .75; flex: none; }
+
+/* 计数做成板块色胶囊，不再是灰扑扑的小数字 */
+.cnt {
+  flex: none;
+  padding: .02rem .34rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat, var(--accent)) 22%, var(--bg));
+  color: color-mix(in srgb, var(--cat, var(--accent)) 72%, var(--text));
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.side-item[aria-selected="true"] .cnt { background: rgb(255 255 255 / .22); color: #fff; }
 
 .side-note {
   padding-top: .9rem;
@@ -476,7 +574,7 @@ button, select, input { font: inherit; color: inherit; }
 #sort {
   padding: .32rem .5rem .32rem 1.55rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 8px;
   background: var(--bg-soft);
   font-size: .8125rem;
   cursor: pointer;
@@ -546,14 +644,14 @@ button, select, input { font: inherit; color: inherit; }
   flex-direction: column;
   padding: .85rem .9rem .7rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 10px;
   background: var(--bg-soft);
   transition: border-color .15s, transform .15s, box-shadow .15s;
 }
 .card:hover {
   border-color: color-mix(in srgb, var(--cat, var(--accent)) 55%, var(--border));
-  transform: translateY(-1px);
-  box-shadow: 0 3px 12px -6px rgb(0 0 0 / 28%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -14px rgb(0 0 0 / 45%);
 }
 
 .card-top { display: flex; align-items: flex-start; gap: .6rem; }
@@ -579,7 +677,7 @@ button, select, input { font: inherit; color: inherit; }
 .card-mark.no-logo {
   padding: 0;
   border-color: transparent;
-  background: color-mix(in srgb, var(--cat, var(--accent)) 16%, var(--bg));
+  background: color-mix(in srgb, var(--cat, var(--accent)) 22%, var(--bg));
 }
 .logo-mount img { width: 100%; height: 100%; object-fit: contain; }
 .logo-mount .mark-fb { display: none; font-style: normal; }
@@ -759,8 +857,12 @@ mark {
   .side-note p { margin: 0; }
   .side-ads { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
   .hero-art { width: 46%; right: -4rem; opacity: .4; }
+  /* 分类退化成横向滚动的胶囊条。色块逻辑照搬，只是从竖排方块变成横排胶囊 ——
+     这里必须显式 flex-direction: row，否则会继承上面 .side-list 的 column，
+     横滚条跟着变成竖的。 */
   .side-list {
     display: flex;
+    flex-direction: row;
     gap: .4rem;
     margin: 0 -.9rem .4rem;
     padding: .1rem .9rem .3rem;
@@ -772,13 +874,9 @@ mark {
     width: auto;
     flex: none;
     padding: .3rem .7rem;
-    border: 1px solid var(--border);
     border-radius: 999px;
-    background: var(--bg);
     white-space: nowrap;
   }
-  .side-item[aria-selected="true"] { border-color: transparent; }
-  .side-item[aria-selected="true"]::before { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -787,7 +885,7 @@ mark {
   .masthead-inner { padding: 0 .9rem; }
   .brand-sub { display: none; }
   .nav-link { display: none; }
-  .hero { padding: 1.75rem 0 1.15rem; }
+  .hero { padding: 1.5rem 1.15rem 1.2rem; border-radius: 12px; }
   .hero-art { display: none; }
   .controls { margin-left: 0; }
   .content-head { grid-template-columns: none; }
