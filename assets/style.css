@@ -77,85 +77,20 @@ button, select, input { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: .6rem; color: var(--text); }
 .brand:hover { text-decoration: none; }
 
-/* ── 圆标 + 旋转光环 ───────────────────────────────────────
-   光环是 44 视口的 SVG，比 34px 的圆标大一圈：外圈一道几乎看不见的轨道，
-   上面一道 26 单位的亮弧慢慢转。静止的圈只是个边框，转起来才有
-   "仪器在跑"的感觉。hover 不提速，只让光晕亮一档 —— 一动就提速显得急。 */
-.brand-mark { position: relative; display: block; width: 42px; height: 42px; flex: none; }
-.brand-mark-glow {
-  position: absolute;
-  inset: -7px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 68%);
-  opacity: .5;
-  transition: opacity .25s ease;
-  pointer-events: none;
-}
-.brand:hover .brand-mark-glow { opacity: 1; }
-.brand-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
-.brand-ring-track { fill: none; stroke: var(--border); stroke-width: 1.2; }
-.brand-ring-arc {
-  fill: none;
-  stroke: url(#brandRingGrad);
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  /* 周长 2π×20.5≈128.8；26 亮 + 103 暗，正好一圈不重影 */
-  stroke-dasharray: 26 103;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: brandRingSpin 9s linear infinite;
-}
-@keyframes brandRingSpin { to { transform: rotate(360deg); } }
-.ring-s1 { stop-color: var(--accent); }
-.ring-s2 { stop-color: color-mix(in srgb, var(--accent) 20%, transparent); }
-/* 圆标是白底 PNG 没有透明通道，裁成内切圆：暗色主题下不会露出四个白角 */
-.brand-logo { position: absolute; inset: 4px; width: 34px; height: 34px; border-radius: 50%; }
-
-/* ── 字标 ──────────────────────────────────────────────────
-   渐变 <stop> 的颜色走 CSS 变量：浅色主题深字（--text → --accent），
-   暗色主题亮字。写死颜色的话切主题必瞎一处 —— 浅底配亮字直接消失。
-   Sec 用主题色断开，AISec123 六个字母一色太闷，也顺手把"安全"那段拎出来。 */
-.brand-text { display: flex; flex-direction: column; gap: .2rem; line-height: 1.15; }
-.brand-wordmark { display: block; height: 20px; width: auto; overflow: visible; }
-.wm-text {
-  font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: .01em;
-  fill: url(#wmGrad);
-}
-.wm-sec { fill: var(--accent); }
-.wm-s1 { stop-color: var(--text); }
-.wm-s2 { stop-color: var(--accent); }
-/* 高光层：同一段文字再画一遍，整层填白，用 mask 只露出中间一条 30 宽
-   的亮带、左右淡出。亮带从左往右扫，5.5s 一轮，扫到尾就在右边外停着
-   等下一轮 —— 不循环回扫，回扫会显得画面在抖。
-   高光层里 Sec 也要是白的，否则那一截颜色跟周围不连续。 */
-.wm-text--sheen { fill: #fff; }
-.wm-text--sheen .wm-sec { fill: #fff; }
-.wm-sheen-rect { transform-box: view-box; animation: wmSheen 5.5s ease-in-out infinite; }
-@keyframes wmSheen {
-  0%   { transform: translateX(0); }
-  60%  { transform: translateX(96px); }
-  100% { transform: translateX(96px); }
-}
-
-/* ── 副标 ──────────────────────────────────────────────────
-   一道从左淡出的主题色细线开头，比光秃一行小字多一分"设计过"的意思。
-   字距拉开到 .12em，小字不拉字距就是一糊。 */
-.brand-sub {
-  display: flex;
-  align-items: center;
-  gap: .45rem;
-  font-size: .625rem;
-  letter-spacing: .12em;
-  color: var(--text-muted);
-}
-.brand-sub-rule {
-  width: 14px;
-  height: 1px;
-  flex: none;
-  background: linear-gradient(to right, var(--accent), transparent);
+/* ── 品牌锁定图 ────────────────────────────────────────────
+   用户给的手绘 logo：深红 + 墨绿笔触，字和副标是一体的。
+   浅色主题页头接近白，笔触直接放上去就清楚；暗色主题页头是 #12181b，
+   深红墨绿压不住会糊成一团，所以套一层米白底板 —— 手绘笔触配纸色底板
+   也说得通，像贴在页头上的一张纸。底板只加内边距，img 高度固定，
+   两个主题下 logo 本身一样大。
+   hover 只做轻微变暗，不给手绘 logo 加位移/放大那套俏皮动作。 */
+.brand-lockup-wrap { display: block; line-height: 0; border-radius: 9px; }
+.brand-lockup { display: block; height: 38px; width: auto; transition: opacity .18s ease; }
+.brand:hover .brand-lockup { opacity: .85; }
+[data-theme="dark"] .brand-lockup-wrap {
+  background: #f6f3ec;
+  padding: 4px 9px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / .05), 0 6px 16px -10px rgb(0 0 0 / .6);
 }
 
 .topnav { display: flex; align-items: center; gap: .35rem; }
@@ -933,7 +868,6 @@ mark {
   body { font-size: 14px; }
   .page { padding: 0 .9rem 3rem; }
   .masthead-inner { padding: 0 .9rem; }
-  .brand-sub { display: none; }
   .nav-link { display: none; }
   .hero { padding: 1.5rem 1.15rem 1.2rem; border-radius: 12px; }
   .hero-art { display: none; }
@@ -952,6 +886,5 @@ mark {
   .card:hover { transform: none; }
   .hero-art path, .kicker-dot { animation: none; }
   .wall-item, .wall-mark img { transition: none; }
-  .brand-ring-arc, .wm-sheen-rect { animation: none; }
-  .brand-mark-glow { transition: none; }
+  .brand-lockup { transition: none; }
 }

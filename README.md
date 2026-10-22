@@ -13,6 +13,7 @@ index.html          页面骨架（文案用 data-zh / data-en 双语属性）
 assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
 assets/app.js       左栏分类、logo 墙、搜索、排序、视图、双语、暗色、URL 状态同步
 assets/hero-bg.jpg  hero 面板底图，由 scripts/gen-hero-bg.py 生成
+assets/brand-lockup.png  页头品牌锁定图（手绘 logo 去底版），由 scripts/make-brand-lockup.py 生成
 assets/logo.jpg     站点自身品牌标原图（447×447，改标只换这一张）
 assets/logo.png     上面那张压到 96px，页头用
 assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
@@ -23,6 +24,7 @@ robots.txt         放行全部爬虫 + 声明 sitemap
 sitemap.xml        单页站点，只有一个 URL（见「SEO」一节）
 scripts/fetch-logos.sh  批量抓品牌图标
 scripts/gen-hero-bg.py  重新生成 hero 底图
+scripts/make-brand-lockup.py  从用户给的手绘 logo 生成页头品牌图
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
 ```
 
@@ -122,6 +124,35 @@ python3 scripts/gen-hero-bg.py --seed 7 --w 1600 --h 900 --out /tmp/bg.jpg
 ```
 
 依赖 numpy / pillow，只在本机跑，站点本身零依赖。
+
+## 页头品牌图
+
+用户给的手绘 logo（深红 + 墨绿笔触，「AISec123」和「全网最全AI安全知识图谱」一体）
+不能直接拿去用：源图是一张「白纸 + 笔触」的 PNG，四角透明但**中间整块是不透明白底**
+（62.7% 的像素 alpha=255）。直接放，浅色主题下白底看不出来，暗色主题下会赫然出现
+一块白矩形、四角却还是透明的，像个渲染 bug。
+
+`scripts/make-brand-lockup.py` 做三件事：
+
+1. **去白底** —— 把每个像素当成「笔触色与白色的混合」反解：
+   `C = (p - 255*(1-a)) / a`，其中 `a = 255 - min(r,g,b)`。纯白像素 a=0 变透明，
+   纯笔触色 a=1 原色保留，边缘过渡像素给出中间值 —— 抗锯齿因此完整保留，
+   不会出现白边或彩边。抠之前统计过：95344 个近白像素里只有 1960 个挨着深色
+   像素（全是笔画边缘），可以安全抠。
+2. 裁到内容边界，留 4px 呼吸。
+3. 缩到 2x 显示尺寸（CSS 显示 103x38，出图 207x76），LANCZOS 重采样。
+   349KB 的源图出来 13–33KB。
+
+```bash
+python3 scripts/make-brand-lockup.py [源图路径]     # 默认 ~/Downloads/aisec123_logo.png
+```
+
+**暗色主题要套米白底板**：笔触是深红 + 墨绿，压 `#12181b` 的页头会糊成一团，
+所以 `[data-theme="dark"] .brand-lockup-wrap` 加一层 `#f6f3ec` 底板 + 圆角 +
+投影。手绘笔触配纸色底板也说得通，像贴在页头上的一张纸。底板只加内边距，
+img 高度固定，两个主题下 logo 本身一样大。
+
+logo 里已经带了副标，所以 HTML 不再单独写一行 `brand-sub` —— 写了就跟图里重复。
 
 ## 展示位
 

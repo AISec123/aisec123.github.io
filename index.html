@@ -69,49 +69,14 @@
 <header class="masthead">
   <div class="masthead-inner">
     <a class="brand" href="./">
-      <!-- 品牌锁定：圆标 + SVG 渐变字标。字标用 SVG 而不是 HTML 文本，
-           是为了拿到 HTML 做不到的三样东西 —— 渐变填充（background-clip
-           在部分浏览器会把字重吃掉）、SVG 滤镜光晕、以及被 mask 裁着的
-           高光扫过效果。主题切换靠 CSS 变量改 <stop> 的 stop-color，
-           浅色主题是深字、暗色主题是亮字，不会出现浅底浅字。 -->
-      <span class="brand-mark">
-        <span class="brand-mark-glow" aria-hidden="true"></span>
-        <svg class="brand-ring" viewBox="0 0 44 44" aria-hidden="true">
-          <defs>
-            <linearGradient id="brandRingGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop class="ring-s1" offset="0"></stop>
-              <stop class="ring-s2" offset="1"></stop>
-            </linearGradient>
-          </defs>
-          <circle class="brand-ring-track" cx="22" cy="22" r="20.5"></circle>
-          <circle class="brand-ring-arc" cx="22" cy="22" r="20.5"></circle>
-        </svg>
-        <img class="brand-logo" src="assets/logo.png" alt="AISec123" width="34" height="34" decoding="async">
-      </span>
-      <span class="brand-text">
-        <svg class="brand-wordmark" viewBox="0 0 92 22" role="img" aria-label="AISec123">
-          <title>AISec123</title>
-          <defs>
-            <linearGradient id="wmGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop class="wm-s1" offset="0"></stop>
-              <stop class="wm-s2" offset="1"></stop>
-            </linearGradient>
-            <linearGradient id="wmSheen" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
-              <stop offset=".5" stop-color="#fff" stop-opacity=".95"></stop>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-            </linearGradient>
-            <mask id="wmMask">
-              <rect class="wm-sheen-rect" x="-34" y="-4" width="30" height="30" fill="url(#wmSheen)"></rect>
-            </mask>
-          </defs>
-          <text class="wm-text" x="0" y="17">AI<tspan class="wm-sec">Sec</tspan>123</text>
-          <text class="wm-text wm-text--sheen" x="0" y="17" mask="url(#wmMask)">AI<tspan class="wm-sec">Sec</tspan>123</text>
-        </svg>
-        <span class="brand-sub">
-          <span class="brand-sub-rule" aria-hidden="true"></span>
-          <span data-zh="AI 安全知识图谱" data-en="AI Security Knowledge Map">AI 安全知识图谱</span>
-        </span>
+      <!-- 品牌锁定图：用户给的手绘 logo，「AISec123」和「全网最全AI安全知识图谱」
+           是一体的，所以副标不再单独写 HTML —— 写了就跟图里那行重复。
+           源图中间是一整块不透明白底，scripts/make-brand-lockup.py 把白底反解成
+           透明、裁到内容边界、出 2x 素材（103x38 显示 / 207x76 实际）。
+           浅色主题笔触直接放页头上；暗色主题页头是深的，深红墨绿压不住，
+           靠 CSS 套米白底板，见 .brand-lockup-wrap。 -->
+      <span class="brand-lockup-wrap">
+        <img class="brand-lockup" src="assets/brand-lockup.png" alt="AISec123 · 全网最全 AI 安全知识图谱" width="103" height="38" decoding="async">
       </span>
     </a>
 
