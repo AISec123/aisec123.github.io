@@ -238,31 +238,6 @@ button, select, input { font: inherit; color: inherit; }
   font-size: .9375rem;
 }
 
-/* 三个数字：导航站最有说服力的商业信号就是"我这儿有多少东西"。
-   数值由 app.js 现算，这里是纯排版。 */
-.hero-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .7rem 1.9rem;
-  margin: 1.35rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.hero-stats li { display: flex; flex-direction: column; gap: .05rem; }
-.hero-stats b {
-  font-family: var(--font-mono);
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.1;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
-}
-.hero-stats span {
-  font-size: .6875rem;
-  letter-spacing: .05em;
-  color: rgb(255 255 255 / .58);
-}
-
 .hero-cta { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.15rem; }
 
 .btn-primary, .btn-ghost {

@@ -210,19 +210,6 @@
     $('#side-updated').textContent = t('更新于 ', 'Updated ') + (D.updated || '');
   }
 
-  /* hero 里那三个数字：收录数 / 板块数 / 更新时间。
-     全部从数据里现算，加条目不用回来改 HTML。 */
-  function renderStats() {
-    var el = $('#hero-stats');
-    if (!el) return;
-    function cell(n, label) {
-      return '<li><b>' + esc(n) + '</b><span>' + esc(label) + '</span></li>';
-    }
-    el.innerHTML = cell(ALL.length, t('条收录', 'listings')) +
-      cell(SECS.length, t('个板块', 'sections')) +
-      cell(D.updated || '—', t('最后更新', 'last updated'));
-  }
-
   function renderCats() {
     var counts = {};
     ALL.forEach(function (e) { counts[e.section] = (counts[e.section] || 0) + 1; });
@@ -462,7 +449,6 @@
   applyLang();
   applyTheme();
   renderTimes();
-  renderStats();
   renderWall();
   renderFriends();
   renderAll();
