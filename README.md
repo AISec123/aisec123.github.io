@@ -142,11 +142,13 @@ python3 scripts/gen-hero-bg.py --seed 7 --w 1600 --h 900 --out /tmp/bg.jpg
 
 两处关键词布局，分工不同：
 
-- **`alternateName`（JSON-LD）** —— 声明「本站又称 AI 攻防数据库 / AI 威胁矩阵 /
-  AI 安全知识库」。这是告诉搜索引擎别名的正规位置，带/不带空格各写了一份，
-  因为中文分词两种都可能被搜。
-- **页脚「又称」一行（`.footer-alias`）** —— 同一批别名的可见文本。搜索引擎读
-  可见内容，`meta keywords` 那种标签 2009 年后就没人看了，别名必须出现在正文里。
+- **`<title>` 标签** —— 主标题后面用 `｜` 接上全部别名：
+  `AISec123 · 全网最全 AI 安全知识图谱｜AI 攻防数据库 · AI 威胁矩阵 · AI 安全知识库`。
+  title 是搜索引擎给页面定主题的第一权重，别名必须出现在这里，而不是藏在
+  页脚或 meta keywords（那东西 2009 年后就没人看了）。og:title / twitter:title
+  跟 `<title>` 保持一致。超长部分在搜索结果里会被截断，但索引用的是完整字符串。
+- **`alternateName`（JSON-LD）** —— 同一批别名的结构化声明，带/不带空格各写
+  了一份，因为中文分词两种都可能被搜。
 
 `potentialAction` 里的 `SearchAction` 指向 `/?q={关键词}`（就是 `app.js` 的
 `readUrl` 读的那个参数），够条件时 Google 会在搜索结果里给站点加一个站内搜索框。
