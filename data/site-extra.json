@@ -1,0 +1,39 @@
+{
+  "sponsors": [
+    {
+      "name": "Scanners-Box 每日推荐",
+      "url": "https://we5ter.github.io/ai-tools/",
+      "logo": "assets/logos/we5ter-github-io.png",
+      "tag": "自家",
+      "tag_en": "OWN",
+      "zh": "每天一个 AI 安全工具，读完源码再写的技术拆解。",
+      "en": "One AI security tool a day — teardowns written after reading the source."
+    },
+    {
+      "name": "AI 安全威胁矩阵",
+      "url": "https://aisecmatrix.org/",
+      "tag": "自家",
+      "tag_en": "OWN",
+      "zh": "把 AI 系统的攻击面摊成一张可勾选的矩阵。",
+      "en": "The AI attack surface laid out as a checklistable matrix."
+    }
+  ],
+  "friends": [
+    {
+      "name": "We5ter 博客",
+      "url": "https://we5ter.github.io/"
+    },
+    {
+      "name": "Scanners-Box",
+      "url": "https://github.com/We5ter/Scanners-Box"
+    },
+    {
+      "name": "CVE 档案",
+      "url": "https://we5ter.github.io/cve/"
+    },
+    {
+      "name": "AI 安全威胁矩阵",
+      "url": "https://aisecmatrix.org/"
+    }
+  ]
+}

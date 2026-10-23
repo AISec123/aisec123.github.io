@@ -21,19 +21,45 @@ assets/logo.png     上面那张压到 96px，页头用
 assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
                     favicon / 桌面图标 / 分享卡片，都由 logo.jpg 派生（命令见下）
 assets/logos/       条目的品牌图标（本地文件，见 scripts/fetch-logos.sh）
-data/entries.js     ★ 唯一的数据源，加条目只改这里
+data/site-extra.json  站点自有的展示位与友链，不属于数据集
+data/entries.js     ⚠ 生成文件，别手改。真源是 github.com/AISec123/AISecDB
 robots.txt         放行全部爬虫 + 声明 sitemap
 sitemap.xml        单页站点，只有一个 URL（见「SEO」一节）
+scripts/pull-data.js   ★ 改完数据：从 AISecDB 拉数据集 → 重新生成 data/entries.js
 scripts/fetch-logos.sh  批量抓品牌图标
-scripts/gen-static.js   ★ 改完数据必须跑：把条目预渲染进 index.html、生成 JSON-LD、同步 sitemap
+scripts/gen-static.js  ★ 拉完数据必须跑：预渲染进 index.html、生成 JSON-LD、同步 sitemap
 scripts/gen-hero-bg.py  重新生成 hero 底图
 scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图（浅/暗两版）
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
 ```
 
+## 数据在哪
+
+**收录数据不在这个仓库**，在 [AISec123/AISecDB](https://github.com/AISec123/AISecDB)：
+`entries.json` 是纯 JSON + `schema.json`，任何项目都能直接消费，站点只是第一个消费方。
+
+这个仓库里的 `data/entries.js` 是**构建产物**：`pull-data.js` 把数据集和
+`data/site-extra.json`（展示位 + 友链，站点自有，不属于数据集）拼成它，
+再交给 `gen-static.js` 预渲染。GitHub Pages 没有构建步骤，所以产物必须提交。
+
+改数据 → 拉下来 → 预渲染，两步：
+
+```bash
+node scripts/pull-data.js && node scripts/gen-static.js
+```
+
+`pull-data.js` 默认从 AISecDB 的 raw 地址拉；改了本地副本想先看效果，
+加 `--local ../AISecDB/entries.json`。它会校验必填字段、板块引用、URL 协议、
+logo 必须是本地路径、名称是否重复，有错就拒绝写入。
+
+**页面不在运行时去 raw 取数据**，是有意为之：raw.githubusercontent.com 在国内
+经常被阻断，运行时取等于给站点挂一个比 github.io 更容易挂的依赖，拿不到就是白屏。
+发布前同步则同源加载，预渲染也照常。
+
 ## 加一个条目
 
-往 `data/entries.js` 的 `entries` 数组里追加一段：
+去 [AISecDB 的 entries.json](https://github.com/AISec123/AISecDB/blob/main/entries.json)
+往 `entries` 数组里追加一段：
 
 ```js
 {
@@ -42,10 +68,10 @@ scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图�
   section: 'companies',               // 必填，指向 sections 里的 key
   desc: '一句话说明它做什么',           // 中文描述
   desc_en: 'One-line English.',       // 可选，缺省回落中文
-  tags: ['模型安全', 'LLM 防护'],       // 可选，横切标签
+  tags: ['模型安全', 'LLM 防护'],       // 可选，横切标签（图谱的边）
   star: 1522,                         // 可选，有则显示 ★
   region: 'US',                       // 可选：US / CN / IL / CH / EU
-  logo: 'assets/logos/lakera-ai.png',  // 可选，品牌图标；缺省用首字母字标
+  logo: 'assets/logos/lakera-ai.png',  // 可选，必须是站点本地路径；缺省用首字母字标
   post: 'https://…',                  // 可选，深度长文链接
   status: 'featured',                 // 可选，featured 会置顶并打「推荐」标
   added: '2026-10-21'                 // 可选，YYYY-MM-DD，用于「最近更新」排序
@@ -53,27 +79,36 @@ scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图�
 ```
 
 除 name / url / section 外全部可选，没填的字段不会渲染出空占位。
+`logo` 只认本地文件——运行时现取 favicon 经常回一张通用占位图，三家不同公司
+顶上出现同一个假 logo，比首字母更糟。
 
-**改完数据（或改完板块）必须重跑一次预渲染，否则爬虫看到的还是旧内容：**
+**新条目的品牌图标要单独放进这个仓库**（`assets/logos/`，`scripts/fetch-logos.sh`
+能批量抓），因为数据集不引用外部图片 URL。
+
+改完 AISecDB 后回到这个仓库跑：
 
 ```bash
-node scripts/gen-static.js
+node scripts/pull-data.js && node scripts/gen-static.js
 ```
 
-它会重写 `index.html` 里两处 `PRERENDER` 标记之间的内容，并把 `sitemap.xml` 的
-`<lastmod>` 推到 `entries.js` 的 `updated`（只前进不后退）。脚本幂等，多跑无害。
-为什么要这一步见 [SEO](#seo) 一节。
+`gen-static.js` 重写 `index.html` 里两处 `PRERENDER` 标记之间的内容，
+并把 `sitemap.xml` 的 `<lastmod>` 推到数据集的 `updated`（只前进不后退）。
+两个脚本都幂等，多跑无害。为什么要预渲染见 [SEO](#seo) 一节。
 
 ## 加一个板块
 
-往 `sections` 里追加一段（`key` 唯一，条目用 `section` 指向它），页面会自动多出一个 tab、一个分区和一套板块色：
+往 AISecDB `entries.json` 的 `sections` 里追加一段（`key` 唯一，条目用 `section` 指向它），页面会自动多出一个 tab、一个分区和一套板块色：
 
 ```js
 { key: 'conferences', zh: '会议与赛事', en: 'Events', color: '#3A86FF',
   desc: '中文一句话定位', desc_en: 'One-line English.' }
 ```
 
-模板不认识任何具体分类，所以加板块不用改 HTML/CSS/JS：左侧分类栏、板块分区、板块色、标签池全部由数据推导。
+前端不认识任何具体分类，所以加板块不用改 HTML/CSS/JS：左侧分类栏、板块分区、板块色、标签池全部由数据推导。
+
+一处例外：`gen-static.js` 里的 `SCHEMA_TYPE` 把板块映射到 schema.org 类型
+（`Organization` / `SoftwareSourceCode` / `Article` / `Dataset`），没登记的板块
+会回落成 `CreativeWork`。要更精确的条目级结构化数据，去那里加一行。
 
 ## 品牌图标
 
@@ -245,7 +280,8 @@ JSON-LD 那块把图谱关系说给机器听：`tags` → `knowsAbout`（同一�
 或 `sameAs`。板块映射到 `Organization` / `SoftwareSourceCode` / `Article` / `Dataset`。
 「知识图谱」这个定位在数据层面唯一能被机器验证的地方就是这里。
 
-改完数据重跑 `node scripts/gen-static.js`，不用手改 HTML。gzip 后整页约 20KB。
+改完数据跑 `node scripts/pull-data.js && node scripts/gen-static.js`，不用手改 HTML。
+gzip 后整页约 20KB。
 
 ## 本地预览
 
