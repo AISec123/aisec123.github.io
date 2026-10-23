@@ -78,20 +78,19 @@ button, select, input { font: inherit; color: inherit; }
 .brand:hover { text-decoration: none; }
 
 /* ── 品牌锁定图 ────────────────────────────────────────────
-   用户给的手绘 logo：深红 + 墨绿笔触，字和副标是一体的。
-   浅色主题页头接近白，笔触直接放上去就清楚；暗色主题页头是 #12181b，
-   深红墨绿压不住会糊成一团，所以套一层米白底板 —— 手绘笔触配纸色底板
-   也说得通，像贴在页头上的一张纸。底板只加内边距，img 高度固定，
-   两个主题下 logo 本身一样大。
-   hover 只做轻微变暗，不给手绘 logo 加位移/放大那套俏皮动作。 */
-.brand-lockup-wrap { display: block; line-height: 0; border-radius: 9px; }
+   用户给的 logo 截图：深海军蓝底上一条白带，蓝字压在带内，字外面还裹着
+   一圈贴纸式的白描边。脚本把字连同描边抠成透明底，所以两个主题都不垫底板：
+   浅色页头接近白，白描边直接融进去，只剩蓝字；暗色页头是 #12181b，
+   白描边成一圈柔光把字托住。这样 logo 是「长」在页头上的，看不到图片边界。
+   暗色主题换提亮版素材：原图「Sec」是深蓝，压 #12181b 只有 2.1:1，
+   提亮到 4.2:1 才读得清（见 scripts/make-brand-lockup.py 的 glow_variant）。
+   hover 只做轻微变暗，不给 logo 加位移/放大那套俏皮动作。 */
+.brand-lockup-wrap { display: block; line-height: 0; }
 .brand-lockup { display: block; height: 38px; width: auto; transition: opacity .18s ease; }
+.brand-lockup-dark { display: none; }
 .brand:hover .brand-lockup { opacity: .85; }
-[data-theme="dark"] .brand-lockup-wrap {
-  background: #f6f3ec;
-  padding: 4px 9px;
-  box-shadow: 0 1px 0 rgb(255 255 255 / .05), 0 6px 16px -10px rgb(0 0 0 / .6);
-}
+[data-theme="dark"] .brand-lockup:not(.brand-lockup-dark) { display: none; }
+[data-theme="dark"] .brand-lockup-dark { display: block; }
 
 .topnav { display: flex; align-items: center; gap: .35rem; }
 

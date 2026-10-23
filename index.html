@@ -69,14 +69,16 @@
 <header class="masthead">
   <div class="masthead-inner">
     <a class="brand" href="./">
-      <!-- 品牌锁定图：用户给的手绘 logo，「AISec123」和「全网最全AI安全知识图谱」
+      <!-- 品牌锁定图：用户给的 logo 截图，「AISec123」和「全网最全AI安全知识图谱」
            是一体的，所以副标不再单独写 HTML —— 写了就跟图里那行重复。
-           源图中间是一整块不透明白底，scripts/make-brand-lockup.py 把白底反解成
-           透明、裁到内容边界、出 2x 素材（103x38 显示 / 207x76 实际）。
-           浅色主题笔触直接放页头上；暗色主题页头是深的，深红墨绿压不住，
-           靠 CSS 套米白底板，见 .brand-lockup-wrap。 -->
+           源图是深海军蓝底上一条白带、蓝字压在带内。scripts/make-brand-lockup.py
+           把字连同一圈贴纸白描边抠成透明底：浅色页头上白描边融进白侧栏，
+           只剩蓝字；暗色页头上描边成一圈柔光。两个主题都不垫底板，
+           看不到图片边界。出 2x 素材（115x38 显示 / 231x76 实际），
+           暗色主题换提亮版，因为「Sec」的深蓝压 #12181b 只有 2.1:1。 -->
       <span class="brand-lockup-wrap">
-        <img class="brand-lockup" src="assets/brand-lockup.png" alt="AISec123 · 全网最全 AI 安全知识图谱" width="103" height="38" decoding="async">
+        <img class="brand-lockup" src="assets/brand-lockup.png" alt="AISec123 · 全网最全 AI 安全知识图谱" width="115" height="38" decoding="async">
+        <img class="brand-lockup brand-lockup-dark" src="assets/brand-lockup-glow.png" alt="" width="115" height="38" decoding="async">
       </span>
     </a>
 

@@ -13,7 +13,8 @@ index.html          页面骨架（文案用 data-zh / data-en 双语属性）
 assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
 assets/app.js       左栏分类、搜索、排序、视图、双语、暗色、URL 状态同步
 assets/hero-bg.jpg  hero 面板底图，由 scripts/gen-hero-bg.py 生成
-assets/brand-lockup.png  页头品牌锁定图（手绘 logo 去底版），由 scripts/make-brand-lockup.py 生成
+assets/brand-lockup.png  页头品牌锁定图·浅色主题版，由 scripts/make-brand-lockup.py 生成
+assets/brand-lockup-glow.png  同上·暗色主题提亮版（「Sec」深蓝抬到 4.2:1）
 assets/logo.jpg     站点自身品牌标原图（447×447，改标只换这一张）
 assets/logo.png     上面那张压到 96px，页头用
 assets/logo-32.png / assets/apple-touch-icon.png / assets/og.png
@@ -24,7 +25,7 @@ robots.txt         放行全部爬虫 + 声明 sitemap
 sitemap.xml        单页站点，只有一个 URL（见「SEO」一节）
 scripts/fetch-logos.sh  批量抓品牌图标
 scripts/gen-hero-bg.py  重新生成 hero 底图
-scripts/make-brand-lockup.py  从用户给的手绘 logo 生成页头品牌图
+scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图（浅/暗两版）
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
 ```
 
@@ -131,30 +132,41 @@ python3 scripts/gen-hero-bg.py --seed 7 --w 1600 --h 900 --out /tmp/bg.jpg
 
 ## 页头品牌图
 
-用户给的手绘 logo（深红 + 墨绿笔触，「AISec123」和「全网最全AI安全知识图谱」一体）
-不能直接拿去用：源图是一张「白纸 + 笔触」的 PNG，四角透明但**中间整块是不透明白底**
-（62.7% 的像素 alpha=255）。直接放，浅色主题下白底看不出来，暗色主题下会赫然出现
-一块白矩形、四角却还是透明的，像个渲染 bug。
+用户给的 logo 截图（深海军蓝底上一条白带，蓝字「AISec123」+ 副标压在带内）
+不能直接拿去用：图里绝大部分是背景，而且字是**贴纸风** —— 蓝芯外面还裹着
+一圈 2–4px 的白描边，描边占了视觉重量，只抠蓝芯字会细一圈。
 
-`scripts/make-brand-lockup.py` 做三件事：
+`scripts/make-brand-lockup.py` 做六件事：
 
-1. **去白底** —— 把每个像素当成「笔触色与白色的混合」反解：
-   `C = (p - 255*(1-a)) / a`，其中 `a = 255 - min(r,g,b)`。纯白像素 a=0 变透明，
-   纯笔触色 a=1 原色保留，边缘过渡像素给出中间值 —— 抗锯齿因此完整保留，
-   不会出现白边或彩边。抠之前统计过：95344 个近白像素里只有 1960 个挨着深色
-   像素（全是笔画边缘），可以安全抠。
-2. 裁到内容边界，留 4px 呼吸。
-3. 缩到 2x 显示尺寸（CSS 显示 103x38，出图 207x76），LANCZOS 重采样。
-   349KB 的源图出来 13–33KB。
+1. **白带当 ROI** —— `gray>185` 的最大连通域就是那条白带，外扩 10px。
+   字全在带内；带外是海军蓝纹理底，还有右下角一团手绘涂鸦，也是蓝的，
+   先用 ROI 把活动范围框住。
+2. **双门限取蓝像素** —— `sat>0.30` 且 `60<gray<205`。白带（灰 232）和
+   深海（灰 48）同时出局。下限取 60 是专门为了放过「Sec」：那三个字母是更深的蓝，
+   灰只有 86，早先按 90 切直接把它们切没了，logo 变成「AISec123」缺三个字母。
+3. **只留坐在白纸上的连通域** —— 白带自己沿口也有一圈深蓝描边，带外还有涂鸦，
+   颜色上和字母分不掉。但它们**被深蓝底包围**，字母**被白带包围**。所以看每个
+   连通域外扩 4px 后邻域里的白带占比：字母 0.65–0.99，描边碎片和涂鸦 0.02–0.28，
+   按 0.45 一刀切开。
+4. **把白描边按距离圈进 alpha** —— 描边和白带是连着的同一种白，没法按颜色分，
+   只能按距离：逐圈膨胀，第 k 圈 alpha = 1 - k/(R+1)，R=5。反解颜色
+   `C = (p - 232*(1-a)) / a` 后，描边像素仍是白色 —— 于是浅色页头上白描边
+   融进白侧栏只剩蓝字，暗色页头上描边成一圈柔光把字托住。
+5. 按 alpha 裁到内容边界（**不能**用 RGBA 的 `getbbox()`，反解出的 RGB 在全图
+   非零，bbox 会退化成整图），留 3px 呼吸。
+6. 缩到 2x 显示尺寸（CSS 显示 115x38，出图 231x76），LANCZOS 重采样。
+   452x188 的源图出来 39KB。
 
 ```bash
-python3 scripts/make-brand-lockup.py [源图路径]     # 默认 ~/Downloads/aisec123_logo.png
+python3 scripts/make-brand-lockup.py [源图路径]     # 默认 ~/Desktop/截屏2026-10-22 19.38.14.png
 ```
 
-**暗色主题要套米白底板**：笔触是深红 + 墨绿，压 `#12181b` 的页头会糊成一团，
-所以 `[data-theme="dark"] .brand-lockup-wrap` 加一层 `#f6f3ec` 底板 + 圆角 +
-投影。手绘笔触配纸色底板也说得通，像贴在页头上的一张纸。底板只加内边距，
-img 高度固定，两个主题下 logo 本身一样大。
+**两个主题都不垫底板，靠换图解决对比度**：原图「Sec」和副标是深蓝，
+RGB(27,72,147) 压 `#12181b` 只有 2.1:1，会糊。所以暗色主题换 `brand-lockup-glow.png`
+—— `glow_variant()` 在线性光空间把暗部亮度抬到 0.19（同乘一个系数，色相不变），
+提到 4.2:1。「AI」的亮蓝本来就有 4.7:1，「123」的青 5.6:1，都不动。
+两个 `<img>` 靠 CSS 按 `[data-theme]` 切换，所以 logo 是「长」在页头上的，
+看不到图片边界。
 
 logo 里已经带了副标，所以 HTML 不再单独写一行 `brand-sub` —— 写了就跟图里重复。
 
