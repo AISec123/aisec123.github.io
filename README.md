@@ -12,6 +12,7 @@ AI 安全公司 / 开源项目 / 深度文章 / 标准与数据集的一站式�
 index.html          页面骨架（文案用 data-zh / data-en 双语属性）
 assets/style.css    全站唯一样式表，配色变量与博客主题 yoyo 一致
 assets/app.js       左栏分类、搜索、排序、视图、双语、暗色、URL 状态同步
+assets/render.js    渲染层（数据 → HTML 字符串），app.js 和 scripts/gen-static.js 共用
 assets/hero-bg.jpg  hero 面板底图，由 scripts/gen-hero-bg.py 生成
 assets/brand-lockup.png  页头品牌锁定图·浅色主题版，由 scripts/make-brand-lockup.py 生成
 assets/brand-lockup-glow.png  同上·暗色主题提亮版（「Sec」深蓝抬到 4.2:1）
@@ -24,6 +25,7 @@ data/entries.js     ★ 唯一的数据源，加条目只改这里
 robots.txt         放行全部爬虫 + 声明 sitemap
 sitemap.xml        单页站点，只有一个 URL（见「SEO」一节）
 scripts/fetch-logos.sh  批量抓品牌图标
+scripts/gen-static.js   ★ 改完数据必须跑：把条目预渲染进 index.html、生成 JSON-LD、同步 sitemap
 scripts/gen-hero-bg.py  重新生成 hero 底图
 scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图（浅/暗两版）
 .nojekyll           关掉 GitHub Pages 的 Jekyll 处理，直接发静态文件
@@ -51,6 +53,16 @@ scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图�
 ```
 
 除 name / url / section 外全部可选，没填的字段不会渲染出空占位。
+
+**改完数据（或改完板块）必须重跑一次预渲染，否则爬虫看到的还是旧内容：**
+
+```bash
+node scripts/gen-static.js
+```
+
+它会重写 `index.html` 里两处 `PRERENDER` 标记之间的内容，并把 `sitemap.xml` 的
+`<lastmod>` 推到 `entries.js` 的 `updated`（只前进不后退）。脚本幂等，多跑无害。
+为什么要这一步见 [SEO](#seo) 一节。
 
 ## 加一个板块
 
@@ -107,7 +119,8 @@ OG 上没写字，只放了标：试过用 `qlmanage` 把带文案的 SVG 光栅
 图例条是 12 个「图标 + 名称」的胶囊（企业 / 开源项目 / 深度文章 / 模型评测数据集 /
 论文 / 教授 / 知名博主 / 微信公众号 / 知乎 / bilibili / 微博 / YouTube），
 **写成静态 HTML 而不是 JS 渲染** —— 爬虫不执行 JS，SEO 那轮已经因为这个吃过亏
-（见下面「已知短板」）。图标统一一个青色，不搞十二种颜色：深色面板上彩虹一排很吵。
+（条目列表现在也预渲染了，见「SEO · 预渲染」）。图标统一一个青色，不搞十二种颜色：
+深色面板上彩虹一排很吵。
 这里原来是一面灰度品牌 logo 墙，`renderWall()` 已从 app.js 删除。
 
 左侧固定一列分类栏（板块 + 提交入口 + 展示位），右侧是详情卡片网格。
@@ -178,14 +191,17 @@ logo 里已经带了副标，所以 HTML 不再单独写一行 `brand-sub` —�
 
 ## SEO
 
-站点是单页应用，分类 / 搜索 / 排序全是前端状态，所以 SEO 资产都很薄但齐全：
+站点是单页应用，分类 / 搜索 / 排序全是前端状态，所以可索引的 URL 只有一个；
+内容靠预渲染补齐（见本节末尾）：
 
-| 文件 | 作用 |
+| 文件 / 位置 | 作用 |
 |---|---|
 | `robots.txt` | 放行全部 + 声明 sitemap 地址 |
-| `sitemap.xml` | 只有一个 URL（`?sec=` / `?q=` 是同一页的不同视图，属重复内容，不进） |
+| `sitemap.xml` | 只有一个 URL（`?sec=` / `?q=` 是同一页的不同视图，属重复内容，不进）；`<lastmod>` 由脚本同步 |
 | `index.html` `<head>` | canonical、og / twitter 卡片、theme-color |
-| `index.html` JSON-LD | `WebSite` + `Organization` 结构化数据 |
+| `index.html` JSON-LD（手写块） | `WebSite` + `Organization`，别名声明与站内 `SearchAction` |
+| `index.html` `PRERENDER:LIST` | 50 条条目的静态卡片，给不执行 JS 的爬虫 |
+| `index.html` `PRERENDER:LD` | `ItemList` + 每条实体的结构化数据，脚本生成 |
 
 两处关键词布局，分工不同：
 
@@ -194,21 +210,42 @@ logo 里已经带了副标，所以 HTML 不再单独写一行 `brand-sub` —�
   title 是搜索引擎给页面定主题的第一权重，别名必须出现在这里，而不是藏在
   页脚或 meta keywords（那东西 2009 年后就没人看了）。og:title / twitter:title
   跟 `<title>` 保持一致。超长部分在搜索结果里会被截断，但索引用的是完整字符串。
+
+  **中文标题的真源只有 `index.html` 这一处。** `app.js` 在加载时把它缓存成
+  `TITLE_ZH`、切语言时还原，自己不再写一份中文标题。之前 `applyLang()` 把
+  `document.title` 硬改成「AISec123 · AI 安全导航」——Googlebot / Bingbot 渲染
+  JS 之后拿到的就是那个，head 里布的别名关键词全被丢掉，而且标题正好写着
+  「导航」。改标题只改 `index.html`，英文标题改 `app.js` 的 `TITLE_EN`。
 - **`alternateName`（JSON-LD）** —— 同一批别名的结构化声明，带/不带空格各写
-  了一份，因为中文分词两种都可能被搜。
+  了一份，因为中文分词两种都可能被搜。`AI 安全导航` 也留在这里：它是想排名的
+  搜索词，但不是品牌自称，`alternateName` 正是放这种词的正规位置。
 
 `potentialAction` 里的 `SearchAction` 指向 `/?q={关键词}`（就是 `app.js` 的
 `readUrl` 读的那个参数），够条件时 Google 会在搜索结果里给站点加一个站内搜索框。
 
-**改 `data/entries.js` 的 `updated` 时，把 `sitemap.xml` 的 `<lastmod>` 同步成同一天。**
+### 预渲染：index.html 里那 100KB 是生成的
 
-### 已知短板：内容是 JS 渲染的
+不执行 JS 的爬虫眼里，单页应用的内容等于不存在。Googlebot / Bingbot 会渲染 JS
+所以看得见，但**百度和绝大多数 AI 爬虫（GPTBot、ClaudeBot、PerplexityBot）不执行**，
+它们只拿到 `<head>` 和 hero 那几行字——对一个内容即产品的站，等于主体全部不可索引，
+AI 答案引擎也引用不到任何具体条目。
 
-54 个条目的卡片由 `app.js` 从 `data/entries.js` 渲染。Googlebot / Bingbot 会执行
-JS，看得见；但**大多数 AI 爬虫（GPTBot、ClaudeBot 等）不执行 JS**，它们只拿到
-`<head>` 和 hero/页脚的静态文本。想让 AI 答案引擎引用到具体条目，需要把条目
-做成初始 HTML（`<noscript>` 全量列表，或构建时预渲染进 index.html）——
-这是个要加生成步骤的改动，还没做。
+`scripts/gen-static.js` 解决这个：把 50 条卡片直接写进 `index.html` 的 `#list`。
+关键是它**复用 `assets/render.js`**——浏览器里 app.js 用的同一批渲染函数、同一个
+默认状态（中文 / 全部板块 / 推荐排序 / 无搜索词），所以静态版和 JS 版的 markup
+逐字节一致（差的只有 `mountLogos` 事后补的 `src` 和 `data-mounted`）。app.js 加载后
+重画 `#list` 不会闪，爬虫索引到的和用户看到的是同一份内容。
+
+这也是渲染逻辑必须从 `app.js` 抽到 `render.js` 的原因：往脚本里抄一份渲染代码，
+两边迟早漂移，漂移的结果就是"爬虫看一版、用户看另一版"。改 `render.js` 的卡片
+结构后记得重跑脚本。
+
+JSON-LD 那块把图谱关系说给机器听：`tags` → `knowsAbout`（同一标签下的公司 / 工具 /
+文章因此互相关联，这就是图的边），`post` → `subjectOf`，`github` → `codeRepository`
+或 `sameAs`。板块映射到 `Organization` / `SoftwareSourceCode` / `Article` / `Dataset`。
+「知识图谱」这个定位在数据层面唯一能被机器验证的地方就是这里。
+
+改完数据重跑 `node scripts/gen-static.js`，不用手改 HTML。gzip 后整页约 20KB。
 
 ## 本地预览
 

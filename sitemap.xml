@@ -2,7 +2,8 @@
 <!--
   站点只有 index.html 一个页面（分类 / 搜索 / 排序都是前端状态，URL 参数
   ?sec= / ?q= 只是同一页的不同视图，属重复内容，不进 sitemap）。
-  改 data/entries.js 的 updated 后，把下面 <lastmod> 同步成同一天。
+  <lastmod> 由 scripts/gen-static.js 跟着 data/entries.js 的 updated 同步，
+  只前进不后退，不用手改。
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
