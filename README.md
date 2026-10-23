@@ -36,7 +36,9 @@ scripts/make-brand-lockup.py  从用户给的 logo 截图生成页头品牌图�
 ## 数据在哪
 
 **收录数据不在这个仓库**，在 [AISec123/AISecDB](https://github.com/AISec123/AISecDB)：
-`entries.json` 是纯 JSON + `schema.json`，任何项目都能直接消费，站点只是第一个消费方。
+`entries.json` 是纯 JSON + `schema.json`，站点只是第一个消费方。数据许可是
+CC BY-NC-SA 4.0 —— 非商业用途可自由使用，商业使用需向数据集仓库申请授权，
+详见那边的 `LICENSE`。
 
 这个仓库里的 `data/entries.js` 是**构建产物**：`pull-data.js` 把数据集和
 `data/site-extra.json`（展示位 + 友链，站点自有，不属于数据集）拼成它，
